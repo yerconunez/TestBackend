@@ -1,0 +1,252 @@
+#%RAML 1.0
+ 
+title: Test Backend
+baseUri: localhost:8080/api 
+version: v1
+
+securitySchemes:
+  JWT:
+    description: handles authentication for the methods that require it.
+    type: Authentication JWT.
+    describedBy:
+      headers:
+        Authorization:
+          description: Token
+          type: string
+          required: true
+      responses:
+        401:
+          description: Problems with token (token invalid, expired, blacklisted or not provided).
+/new:
+  description: Register a new user with fields required.
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          name:
+            displayName: Name
+            required: true
+            type: string
+          username:
+            displayName: Name
+            required: true    
+            type: string
+          email:
+            displayName: Email
+            required: true
+            type: email
+          password:
+            displayName: Password
+            required: true
+            type: string
+            minLength: 6
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+                "message": "Register successful."
+              }
+      400:
+        application/json:
+            example: |
+              {
+                "success": true,
+                "message": "Please, complete all fields." 
+              }
+      422:
+        application/json:
+            example: |
+              {
+                "success": true,
+                "message": "Sorry, the email is already registered."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Register failed."
+              }
+      
+/login:
+  description: Login a user with its credentials (email, password).
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          email:
+            displayName: Email
+            required: true
+            type: email
+          password:
+            displayName: Password
+            required: true
+            type: string
+            minLength: 6
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+                "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU2NjkzNjc1NiwiZXhwIjoxNTY2OTQwMzU2LCJuYmYiOjE1NjY5MzY3NTYsImp0aSI6IldpdWhzMlpwcGlaaENPbkgiLCJzdWIiOnsiZW1haWwiOiJ5ZXJjb251bmV6QGdtYWlsLmNvbSIsImRhdGUiOiIyMDE5LTA4LTI3IDIwOjEyOjM2In19.03bzCNrc0HJFGIcUFph1OXarAy7dfY6t7RJqrk76Etw"
+              }
+      422:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Invalid credentials, please verificate email and password."
+              }
+      500:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Login failed."
+              }
+        
+/me:
+  description: Get user with token verification.
+  get:
+    is: [ Authenticate ]
+    queryParameters:
+      Authorization:
+        displayName: Token
+        description: Token of user.
+        required: true
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success":true,
+                "message":
+                {
+                  "id": 1,
+                  "name": "Name of user",
+                  "username":"Username user"
+                  "email": "emailofuser@example.com",
+                  "password":"password encrypted"
+                  "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9sb2dpbiIsImlhdCI6MTU2NjkzNjc1NiwiZXhwIjoxNTY2OTQwMzU2LCJuYmYiOjE1NjY5MzY3NTYsImp0aSI6IldpdWhzMlpwcGlaaENPbkgiLCJzdWIiOnsiZW1haWwiOiJ5ZXJjb251bmV6QGdtYWlsLmNvbSIsImRhdGUiOiIyMDE5LTA4LTI3IDIwOjEyOjM2In19.03bzCNrc0HJFGIcUFph1OXarAy7dfY6t7RJqrk76Etw"
+                }
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Token invalid or expired."
+              }
+/logout:
+  description: Logout user and invalidate token.
+  get:
+    is: [ Authenticated ]
+    queryParameters:
+      Authorization:
+        displayName: Token
+        description: Token of user.
+        required: true
+        type: string
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+                "message": "User logged out successfully."
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Loggout failed. Token Invalid."
+              }
+    
+
+/user:
+  description: Manipulate the information associate with the authenticated user.
+  post:
+    is: [ Authenticated ]
+    queryParameters:
+      Authorization:
+        displayName: Token
+        description: Token provided of user.
+        type: string
+        required: true
+    body:
+      multipart/form-data:
+        formParameters:
+          name:
+            displayName: Name
+            description: A new name for the user
+            type: string
+            required: true
+          email:
+            displayName: Email
+            description: A new email for the user
+            type: email
+            required: true
+          password:
+            displayName: Password
+            description: A new password for the user
+            type: string
+            required: true
+            minLength: 6
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success": true
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "User not found."
+              }
+delete:
+    is: [ Authenticated ]
+    queryParameters:
+      Authorization:
+        displayName: Token
+        description: Token provided of user.
+        type: string
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+                "message": user
+              }
+      401:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "message": "Token expired."
+              }
+
+
+
