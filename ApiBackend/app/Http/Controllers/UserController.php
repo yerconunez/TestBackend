@@ -29,7 +29,7 @@ class UserController extends Controller
         }
         $users = $this->getByEmail($request->email);
         if (!empty($users)) {
-            return response()->json([ 'success' => false,'message' => "Sorry, the email is already registered."], 401);
+            return response()->json([ 'success' => false,'message' => "Sorry, the email is already registered."], 422);
         }
         
         $parameters = ['name' => $request->name, 'username' => $request->username, 'email' => $request->email,
@@ -79,7 +79,7 @@ class UserController extends Controller
         if($request->email != $user->email){
             $users = $this->getByEmail($request->email);
             if(!empty($users)){
-                return response()->json([ 'success' => false,'message' => "Sorry, the email is already registered."], 400);
+                return response()->json([ 'success' => false,'message' => "Sorry, the email is already registered."], 422);
             }
         }
 

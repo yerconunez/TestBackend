@@ -26,10 +26,10 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $validator = Validator::make($credentials, [
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:6',
         ]);
         if($validator->fails()) {
-            return response()->json(['success'=> false, 'message'=> $validator->messages()], 400);
+            return response()->json(['success'=> false, 'message'=> 'Please, complete all fields.'], 400);
         }
 
         $url = 'http://5d5d8e0f6cf1330014feaf66.mockapi.io/api/v1/users?search='.$request->email;
@@ -37,7 +37,7 @@ class AuthController extends Controller
         $res = $client->request('GET', $url , []);
         $users = json_decode($res->getBody());
         if ( empty($users) || !Hash::check($request->password, $users[0]->password) ){
-            return response()->json(['success'=> false, 'message'=> 'Unauthorized'], 401);
+            return response()->json(['success'=> false, 'message'=> 'Invalid credentials, please verificate email and password.'], 422);
         }
 
         $now = Carbon::now()->toDateTimeString();
@@ -70,7 +70,7 @@ class AuthController extends Controller
         if($res->getStatusCode()==200 || $res->getStatusCode()==201 ){
             return response()->json(['success'=> true, 'message'=> "{$token}"], 200);
         }
-        return response()->json(['success' => false,'message' => "Sorry, Login failed."], 500);
+        return response()->json(['success' => false,'message' => 'Sorry, Login failed.'], 500);
     }
     
 
