@@ -16,7 +16,7 @@ securitySchemes:
           required: true
       responses:
         401:
-          description: Problems with token (token invalid, expired, blacklisted or not provided).
+          description: problems with token (token invalid, expired, blacklisted or not provided).
 /new:
   description: Register a new user with fields required.
   post:
@@ -178,31 +178,36 @@ securitySchemes:
     
 
 /user:
-  description: Manipulate the information associate with the authenticated user.
+  description: Change information of user.
   post:
     is: [ Authenticated ]
     queryParameters:
       Authorization:
         displayName: Token
-        description: Token provided of user.
+        description: Token of user.
         type: string
         required: true
     body:
       multipart/form-data:
         formParameters:
           name:
-            displayName: Name
-            description: A new name for the user
+            displayName: name
+            description: Name of user
+            type: string
+            required: true
+          name:
+            displayName: nameuser
+            description: Name of user
             type: string
             required: true
           email:
-            displayName: Email
-            description: A new email for the user
+            displayName: email
+            description: Email of user
             type: email
             required: true
           password:
-            displayName: Password
-            description: A new password for the user
+            displayName: password
+            description: Password of user
             type: string
             required: true
             minLength: 6
@@ -227,7 +232,7 @@ delete:
     queryParameters:
       Authorization:
         displayName: Token
-        description: Token provided of user.
+        description: Token of user.
         type: string
         required: true
     responses:
@@ -245,7 +250,7 @@ delete:
             example: |
               {
                 "success": false,
-                "message": "Token expired."
+                "message": "Token invalid."
               }
 
 
