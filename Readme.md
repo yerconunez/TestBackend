@@ -2,18 +2,18 @@
 
 ## Steps to run test
 
-    1. Clonar proyecto **git clone https://github.com/yerconunez/TestBackend.git** into cd  ApiBackend.
-    2. Run the command:  **docker-compose up -d**.
-    3. Run the command: **docker exec -it apibackend_app_1 /bin/bash** to enter to container docker.
-    4. After that run: **cd..** to change directory to /var/www from /var/www/html.
-    5. Run:**php artisan key:generate**.
-    6. Run:**php artisan cache:clear**.
-    7. Run:**php artisan jwt:secret**.
-    7. Run: **exit to log out from container's bash**.
-    8. Once you finish the test run: **docker-compose down** to shut down the services and remove the images.
+    1. Run the command: git clone https://github.com/yerconunez/TestBackend.git 
+    2. Run the command: docker-compose up -d  
+    3. To enter to container docker run the command: docker exec -it apibackend_app_1 /bin/bash 
+    4. To change directory to /var/www/ run the command: cd.. 
+    5. Run command: php artisan key:generate
+    6. Run command: php artisan cache:clear
+    7. Run command: php artisan jwt:secret
+    7. To log out from container run command: exit 
+    8. To end the test run: docker-compose down
 
 ## Routes API Backend
-The information of API is in file api.raml. The route base of API: localhost:8080/api/
+The specific information of API is in the file api.raml. The route base of API: localhost:8080/api/
 
 | Route  | Method  |  JWT Token  |  Parameters                       |
 |--------|---------|-------------|-----------------------------------|
@@ -21,6 +21,7 @@ The information of API is in file api.raml. The route base of API: localhost:808
 | login  |  POST   |     ---     |   email, password                 |
 | me     |  GET    |    Token    |   Authorization: token            |
 | user   |  POST   |    Token    |   Authorization: token            |
+|        |         |             |   name, username, email, password |                    
 | user   |  DELETE |    Token    |   Authorization: token            |
 | logout |  GET    |    Token    |   Authorization: token            |
     
