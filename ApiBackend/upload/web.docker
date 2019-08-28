@@ -3,6 +3,6 @@ FROM nginx:1.10
 ADD ./upload/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www
 RUN  chown -R www-data:www-data /var/www
-RUN  chmod -R 755 /var/www/
+RUN  chmod -R 777 /var/www/
 
 

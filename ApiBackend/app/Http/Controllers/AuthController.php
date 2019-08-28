@@ -83,21 +83,33 @@ class AuthController extends Controller
     {
         try{
             $token = $request->header('Authorization');
-            $token = "{$token}";
             JWTAuth::setToken($token);
             $token = JWTAuth::getToken();
             if (! $claim = JWTAuth::getPayload()->get('sub') ) {
                 return array('success'=>false,'message'=>'User not found.');
             }
             $email = JWTAuth::decode($token)->get('sub')->email;
+            $token = "{$token}";
             $url = 'http://5d5d8e0f6cf1330014feaf66.mockapi.io/api/v1/users?search='.$email;
             $client = new Client();
-            $res = $client->request('GET', $url , []);
-            if($res->getStatusCode()=='200' || $res->getStatusCode()=='201'){
-                JWTAuth::invalidate(JWTAuth::getToken());
-                return response()->json(['success'=>true,'message' => "Loggout successful."], 200);
+            $resGetUser = $client->request('GET', $url , []);
+            $users = json_decode($resGetUser->getBody());
+            if( ($resGetUser->getStatusCode()=='200' || $resGetUser->getStatusCode()=='201') && !empty($users) ){
+                
+                $url = 'http://5d5d8e0f6cf1330014feaf66.mockapi.io/api/v1/users/'.$users[0]->id;
+                $resSaveToken = $client->request('PUT', $url, [
+                    'form_params' => ['token'=>"{$token}"]
+                ]);
+                if($resSaveToken->getStatusCode()=='200' || $resSaveToken->getStatusCode()=='201'){
+                    JWTAuth::invalidate(JWTAuth::getToken());
+                    return response()->json(['success'=>true,'message' => "Login successful."], 200);
+                }
+                else{
+                    return response()->json(['success'=>false,'message' => "Sorry, Login failed."], 401);
+                } 
+                
             }
-            return response()->json(['success'=>true,'message' => "Loggout failed. Token Invalid."], 401);
+            return response()->json(['success'=>false,'message' => "Sorry, Login failed."], 401);
         }catch (TokenExpiredException $e){
             return response()->json(['success'=>false,'message' => "Loggout failed. Token expired."], 401);
         }catch (TokenInvalidException $e) {
