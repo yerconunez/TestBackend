@@ -13,7 +13,7 @@
     9.  Run command: php artisan jwt:secret
     10. Run command: chmod -R 777 /var/www/
     11. To log out from container run command: exit 
-    12. To end the test run: docker-compose down
+    12. To end the test run: sudo docker-compose down
 
 ## Routes API Backend
 The specific information of API is in the file api.raml. The route base of API: localhost:8080/api/
