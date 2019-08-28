@@ -207,7 +207,7 @@ securitySchemes:
             required: true
           password:
             displayName: password
-            description: Password of user
+            description: Password of user encrypted
             type: string
             required: true
             minLength: 6
@@ -227,7 +227,7 @@ securitySchemes:
                 "success": false,
                 "message": "User not found."
               }
-delete:
+  delete:
     is: [ Authenticated ]
     queryParameters:
       Authorization:
